@@ -1,7 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
+import { FiLogOut } from "react-icons/fi";
 import FeedbackStats from "@/components/dashboard/FeedbackStats";
 import FeedbackTable from "@/components/dashboard/FeedbackTable";
 import { getFeedbacks, updateStatus, deleteFeedback, } from "@/services/feedbackService";
+import { useRouter } from "next/router";
+
 
 function Index() {
   const [feedbacks, setFeedbacks] = useState([]);
@@ -80,11 +83,35 @@ function Index() {
     );
   }
 
+  const router = useRouter();
+  const logout = async () => {
+
+    await fetch("/api/logout", {
+      method: "POST"
+    });
+
+    router.push("/login");
+  };
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-10">
+      <div className="mb-8 flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-slate-800">
+          مدیریت بازخوردها
+        </h1>
+
+        <button
+          onClick={logout}
+          className="inline-flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm font-medium text-red-600 transition hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 cursor-pointer"
+        >
+          خروج
+          <FiLogOut className="h-5 w-5" />
+        </button>
+      </div>
+
       <FeedbackStats stats={stats} />
 
-      <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+      <div className="mt-6 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
         <FeedbackTable
           feedbacks={feedbacks}
           updatingId={updatingId}
@@ -94,6 +121,7 @@ function Index() {
         />
       </div>
     </div>
+
   );
 }
 export default Index;

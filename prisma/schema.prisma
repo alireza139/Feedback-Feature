@@ -14,3 +14,10 @@ model Feedback {
   status    String   @default("ثبت شده")
   createdAt DateTime @default(now())
 }
+
+model Admin {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String
+  createdAt DateTime @default(now())
+}
