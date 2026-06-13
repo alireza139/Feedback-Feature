@@ -1,46 +1,60 @@
-import { useState } from 'react';
+import { useState } from "react";
+import toast from "react-hot-toast";
 import {
     FiMessageSquare,
     FiType,
     FiEdit3,
     FiSend,
-    FiCheckCircle,
-    FiAlertCircle,
-    FiInfo,
-} from 'react-icons/fi';
+} from "react-icons/fi";
 
 function FeedbackForm() {
-    const [title, setTitle] = useState('');
-    const [message, setMessage] = useState('');
-    const [statusMsg, setStatusMsg] = useState('');
-    const [isSuccess, setIsSuccess] = useState(false);
+    const [title, setTitle] = useState("");
+    const [message, setMessage] = useState("");
     const [loading, setLoading] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true);
-        setStatusMsg('در حال ارسال...');
-        setIsSuccess(false);
+
+        const cleanTitle = title.trim();
+        const cleanMessage = message.trim();
+
+        if (!cleanTitle || !cleanMessage) {
+            toast.error("عنوان و پیام نباید خالی باشند");
+            return;
+        }
+
+        const toastId = toast.loading("در حال ارسال...");
 
         try {
-            const res = await fetch('/api/feedbacks', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title, message }),
+            setLoading(true);
+
+            const res = await fetch("/api/feedbacks", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    title: cleanTitle,
+                    message: cleanMessage,
+                }),
             });
 
-            if (res.ok) {
-                setTitle('');
-                setMessage('');
-                setStatusMsg('فیدبک شما با موفقیت ثبت شد.');
-                setIsSuccess(true);
-            } else {
-                setStatusMsg('خطایی رخ داد. دوباره تلاش کنید.');
-                setIsSuccess(false);
+            const data = await res.json();
+
+            if (!res.ok || !data.success) {
+                throw new Error(data.message || "خطایی رخ داد");
             }
+
+            setTitle("");
+            setMessage("");
+
+            toast.success(data.message || "فیدبک با موفقیت ثبت شد", {
+                id: toastId,
+            });
         } catch (error) {
-            setStatusMsg('ارتباط با سرور برقرار نشد.');
-            setIsSuccess(false);
+            toast.error(error.message || "ارتباط با سرور برقرار نشد", {
+                id: toastId,
+            });
         } finally {
             setLoading(false);
         }
@@ -57,7 +71,9 @@ function FeedbackForm() {
                             <FiMessageSquare className="text-xl lg:text-2xl" />
                         </div>
                         <div>
-                            <h1 className="text-xl lg:text-2xl font-extrabold">ثبت فیدبک جدید</h1>
+                            <h1 className="text-xl lg:text-2xl font-extrabold">
+                                ثبت فیدبک جدید
+                            </h1>
                             <p className="text-xs lg:text-sm text-white/85 mt-1">
                                 نظرات، پیشنهادات و انتقادات شما به ما کمک می‌کند بهتر شویم.
                             </p>
@@ -67,83 +83,71 @@ function FeedbackForm() {
 
                 <div className="px-2 lg:px-8 my-6">
                     <form onSubmit={handleSubmit} className="space-y-6">
-                        {/* Title Field */}
+
+                        {/* Title */}
                         <div>
                             <label className="mb-2 block text-xs lg:text-sm font-bold text-slate-700">
                                 عنوان بازخورد
                             </label>
+
                             <div className="relative">
                                 <span className="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-4 text-slate-400">
                                     <FiType className="text-sm lg:text-lg" />
                                 </span>
+
                                 <input
                                     type="text"
                                     value={title}
                                     onChange={(e) => setTitle(e.target.value)}
                                     placeholder="مثلاً: پیشنهاد برای بهبود رابط کاربری"
-                                    className="block w-full rounded-2xl border border-slate-200 bg-slate-50 py-3 pr-8 lg:pr-12 pl-4 text-sm lg:text-sm text-slate-700 outline-none transition focus:border-sky-500 focus:bg-white focus:ring-4 focus:ring-sky-100"
-                                    required
+                                    className="block w-full rounded-2xl border border-slate-200 bg-slate-50 py-3 pr-8 lg:pr-12 pl-4 text-sm text-slate-700 outline-none transition focus:border-sky-500 focus:bg-white focus:ring-4 focus:ring-sky-100"
                                 />
                             </div>
+
                             <span className="mt-2 text-xs text-slate-500">
                                 عنوان کوتاه و شفاف وارد کنید.
                             </span>
                         </div>
 
-                        {/* Message Field */}
+                        {/* Message */}
                         <div>
                             <label className="mb-2 block text-xs lg:text-sm font-bold text-slate-700">
                                 متن پیام
                             </label>
+
                             <div className="relative">
                                 <span className="absolute top-4 right-0 pr-4 text-slate-400">
                                     <FiEdit3 className="text-sm lg:text-lg" />
                                 </span>
+
                                 <textarea
                                     value={message}
                                     onChange={(e) => setMessage(e.target.value)}
                                     rows={4}
                                     placeholder="توضیحات کامل خود را اینجا بنویسید..."
                                     className="block w-full rounded-2xl border border-slate-200 bg-slate-50 py-3 pr-8 lg:pr-12 pl-4 text-sm text-slate-700 outline-none transition resize-none focus:border-sky-500 focus:bg-white focus:ring-4 focus:ring-sky-100"
-                                    required
                                 />
                             </div>
-                            <span className="mt-2 text-xs text-slate-500">هرچه توضیح دقیق‌تر باشد، بهتر است.</span>
+
+                            <span className="mt-2 text-xs text-slate-500">
+                                هرچه توضیح دقیق‌تر باشد، بهتر است.
+                            </span>
                         </div>
 
-                        {/* Submit Button */}
+                        {/* Submit */}
                         <div className="pt-2">
                             <button
                                 type="submit"
                                 disabled={loading}
                                 className="flex w-full items-center justify-center gap-2 rounded-2xl bg-sky-700 px-5 py-3 text-sm font-bold text-white transition hover:bg-sky-800 disabled:cursor-not-allowed disabled:opacity-70"
                             >
-                                {loading ? 'در حال ارسال...' : 'ارسال فیدبک'}
+                                {loading ? "در حال ارسال..." : "ارسال فیدبک"}
                                 <FiSend className="text-lg" />
                             </button>
                         </div>
+
                     </form>
 
-                    {/* Status Message */}
-                    {statusMsg && (
-                        <div
-                            className={`mt-4 flex items-center gap-2 rounded-2xl px-4 py-3 text-xs lg:text-sm font-medium ${isSuccess
-                                ? 'border border-green-200 bg-green-50 text-green-700'
-                                : statusMsg === 'در حال ارسال...'
-                                    ? 'border border-amber-200 bg-amber-50 text-amber-700'
-                                    : 'border border-red-200 bg-red-50 text-red-700'
-                                }`}
-                        >
-                            {isSuccess ? (
-                                <FiCheckCircle className="text-sm lg:text-lg shrink-0" />
-                            ) : (
-                                <FiAlertCircle className="text-sm lg:text-lg shrink-0" />
-                            )}
-                            <span>{statusMsg}</span>
-                        </div>
-                    )}
-
-                    {/* Footer Note */}
                     <div className="border-t border-slate-100 pt-4">
                         <p className="text-center text-xs leading-6 text-slate-500">
                             از زمانی که می‌گذارید، سپاس گزاریم.
@@ -154,4 +158,5 @@ function FeedbackForm() {
         </div>
     );
 }
+
 export default FeedbackForm;

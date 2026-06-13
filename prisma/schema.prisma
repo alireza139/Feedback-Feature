@@ -6,13 +6,18 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+enum FeedbackStatus {
+  SUBMITTED
+  REVIEWING
+  RESOLVED
+}
 
 model Feedback {
-  id        Int      @id @default(autoincrement())
+  id        Int            @id @default(autoincrement())
   title     String
-  message   String   @db.Text
-  status    String   @default("ثبت شده")
-  createdAt DateTime @default(now())
+  message   String         @db.Text
+  status    FeedbackStatus @default(SUBMITTED)
+  createdAt DateTime       @default(now())
 }
 
 model Admin {

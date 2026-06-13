@@ -1,54 +1,30 @@
-import { FiChevronDown, FiAlertCircle, FiClock, FiCheckCircle } from "react-icons/fi";
+import { FiChevronDown } from "react-icons/fi";
 
-const statuses = ["ثبت شده", "درحال بررسی", "رسیدگی شده"];
-
-const statusConfig = {
-  "ثبت شده": {
-    icon: FiAlertCircle,
-    selectClass:
-      "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100",
-    iconClass: "text-slate-500",
-  },
-  "درحال بررسی": {
-    icon: FiClock,
-    selectClass:
-      "bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100",
-    iconClass: "text-amber-600",
-  },
-  "رسیدگی شده": {
-    icon: FiCheckCircle,
-    selectClass:
-      "bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100",
-    iconClass: "text-emerald-600",
-  },
-};
+const statuses = [
+  { value: "SUBMITTED", label: "ثبت شده", color: "bg-slate-100 text-slate-700 border-slate-200" },
+  { value: "REVIEWING", label: "در حال بررسی", color: "bg-amber-50 text-amber-700 border-amber-200" },
+  { value: "RESOLVED", label: "رسیدگی شده", color: "bg-emerald-50 text-emerald-700 border-emerald-200" },
+];
 
 export default function StatusSelect({ value, loading, onChange }) {
-  const config = statusConfig[value];
-  const Icon = config.icon;
+  const currentStatus = statuses.find(s => s.value === value) || statuses[0];
 
   return (
-    <div className="relative w-[170px] group">
-      <div
-        className={`absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none ${config.iconClass}`}
-      >
-        <Icon className="text-sm" />
-      </div>
-
+    <div className="relative w-[150px]">
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
         disabled={loading}
-        className={`w-full appearance-none cursor-pointer rounded-xl border px-9 py-2 text-xs font-bold outline-none transition disabled:cursor-not-allowed disabled:opacity-50 ${config.selectClass}`}
+        className={`w-full appearance-none cursor-pointer rounded-lg border px-4 py-2 text-xs font-bold outline-none transition ${currentStatus.color} disabled:opacity-50 disabled:cursor-not-allowed`}
       >
-        {statuses.map((status) => (
-          <option key={status} value={status} className="bg-white text-slate-800">
-            {status}
+        {statuses.map((s) => (
+          <option key={s.value} value={s.value} className="bg-white text-gray-800">
+            {s.label}
           </option>
         ))}
       </select>
 
-      <FiChevronDown className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-hover:text-slate-600" />
+      <FiChevronDown className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none opacity-60" />
     </div>
   );
 }
