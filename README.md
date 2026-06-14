@@ -1,40 +1,140 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+# Feedback Management System
+<div dir="rtl">
+یک سیستم مدیریت فیدبک که با Next.js، Prisma و MySQL پیاده‌سازی شده است.
 
-## Getting Started
+کاربران می‌توانند فیدبک خود را ثبت کنند و ادمین از طریق داشبورد مدیریت می‌تواند آن‌ها را مشاهده، تغییر وضعیت یا حذف کند.
+</div>
 
-First, run the development server:
+## 🚀 تکنولوژی‌های استفاده شده
+- Next.js 
+- API Routes 
+- Prisma ORM 
+- MySQL 
+- TailwindCSS 
+## ⚙️ راهنمای اجرای پروژه در سیستم لوکال
+1. دریافت پروژه
+
+ابتدا پروژه را clone کنید:
+```bash
+git clone https://github.com/alireza139/Feedback-Feature.git
+```
+سپس وارد پوشه پروژه شوید:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cd feedback-feature
+```
+2. نصب وابستگی‌ها
+
+```bash
+npm install
+```
+3. تنظیم متغیرهای محیطی
+
+ ابتدا فایل `env.` را از روی فایل نمونه`env.example.` ایجاد کنید:
+ ```bash
+ cp .env.example .env
+```
+سپس مقادیر داخل فایل `env.` را مطابق تنظیمات سیستم خود ویرایش کنید:
+
+```
+DATABASE_URL="mysql://username:password@localhost:3306/feedback_db"
+
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=admin123
+```
+1. اجرای Migration دیتابیس
+```bash
+npx prisma migrate dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+1. اجرای Seed اولیه
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+برای ایجاد داده‌های اولیه (مانند ادمین اولیه):
+```bash
+npm run seed
+```
+6. اجرای پروژه
+```bash
+npm run dev
+```
+سپس پروژه در آدرس زیر قابل دسترسی خواهد بود:
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+```
+http://localhost:3000
+```
+## 🧠 تصمیمات فنی
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
+- استفاده از Next.js:
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+<div dir="rtl">
+Next.js انتخاب شد زیرا امکان ساخت یک اپلیکیشن full‑stack را فراهم می‌کند.
 
-## Learn More
+در این پروژه از API Routes برای پیاده‌سازی منطق سرور و عملیات CRUD استفاده شده است.
+</div>
 
-To learn more about Next.js, take a look at the following resources:
+- استفاده از Prisma:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
+ کار با دیتابیس را ساده می‌کند
+  چون migration و مدیریت schema را آسان می‌کند
+- استفاده از MySQL
+  
+دیتابیس MySQL به عنوان یک دیتابیس رابطه‌ای پایدار و رایج برای ذخیره داده‌های پروژه استفاده شده است.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- استفاده از API Routes
 
-## Deploy on Vercel
+برای پیاده‌سازی عملیات CRUD و احراز هویت از API Routes در Next.js استفاده شده است تا منطق سمت سرور در همان پروژه مدیریت شود.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🔐 احراز هویت (Authentication)
+در این پروژه از یک سیستم احراز هویت سفارشی (Custom Auth) استفاده شده است.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+ویژگی‌های آن:
+- ورود ادمین از طریق API
+- هش شدن پسوردها با bcrypt
+- ذخیره سشن کاربر در cookie
+- محافظت از مسیر داشبورد با proxy
+- این روش برای پروژه‌های کوچک و متوسط ساده و قابل کنترل است.
+
+## 📂 ساختار پوشه‌های پروژه
+```
+src
+├── components
+│   ├── dashboard
+│   │   ├── FeedbackStats.jsx
+│   │   ├── FeedbackTable.jsx
+│   │   └── StatusSelect.jsx
+│   ├── FeedbackForm.jsx
+│   ├── Footer.jsx
+│   ├── Header.jsx
+│   └── NavLink.jsx
+├── lib
+│   └── prisma.js
+├── pages
+│   ├── api
+│   │   ├── auth
+│   │   │   ├── login.js
+│   │   │   └── logout.js
+│   │   └── feedbacks.js
+│   ├── dashboard
+│   │   └── index.jsx
+│   ├── login
+│   │   └── index.jsx
+│   ├── _app.js
+│   └── index.js
+├── proxy.js
+├── services
+│   ├── authService.js
+│   └── feedbackService.js
+└── styles
+    └── globals.css
+```
+
+## 📸 تصاویر
+
+### صفحه اصلی:
+![Home](./screenshots/home.png)
+
+### صفحه لاگین:
+![Login](./screenshots/login.png)
+
+### داشبورد:
+![Dashboard](./screenshots/dashboard.png)
