@@ -42,12 +42,12 @@ DATABASE_URL="mysql://username:password@localhost:3306/feedback_db"
 ADMIN_USERNAME=admin
 ADMIN_PASSWORD=admin123
 ```
-1. اجرای Migration دیتابیس
+4. اجرای Migration دیتابیس
 ```bash
 npx prisma migrate dev
 ```
 
-1. اجرای Seed اولیه
+5. اجرای Seed اولیه
 
 برای ایجاد داده‌های اولیه (مانند ادمین اولیه):
 ```bash
@@ -61,6 +61,13 @@ npm run dev
 
 ```
 http://localhost:3000
+```
+یوزر و پسورد اولیه در Seed:
+
+با اطلاعات زیر، میتوانید لاگین کنید و وارد داشبورد شوید.
+```
+userName: admin
+password: admin123
 ```
 ## 🧠 تصمیمات فنی
 
