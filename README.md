@@ -21,7 +21,7 @@ git clone https://github.com/alireza139/Feedback-Feature.git
 سپس وارد پوشه پروژه شوید:
 
 ```bash
-cd feedback-feature
+cd Feedback-Feature
 ```
 2. نصب وابستگی‌ها
 
